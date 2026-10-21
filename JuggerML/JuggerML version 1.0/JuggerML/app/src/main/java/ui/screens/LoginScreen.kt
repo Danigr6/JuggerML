@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,10 +37,11 @@ import com.google.firebase.auth.GoogleAuthProvider
 @Preview(showSystemUi = true)
 @Composable
 fun LoginScreen(
-    onLoginSuccess: () -> Unit = {}
+    onLoginSuccess: () -> Unit = {},
+    onRegisterNewAccount: () -> Unit = {}
 ) {
     var context = LocalContext.current
-    var userName by rememberSaveable { mutableStateOf("") }
+    var userGmail by rememberSaveable { mutableStateOf("") }
     var userPassword by rememberSaveable { mutableStateOf("") }
 
     //Google Sing-in
@@ -52,24 +55,33 @@ fun LoginScreen(
 
     val googleSignInClient = remember { GoogleSignIn.getClient(context, gso) }
 
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
-        result -> if(result.resultCode == Activity.RESULT_OK){
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-        try {
-            val account = task.getResult(ApiException::class.java)!!
-            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                try {
+                    val account = task.getResult(ApiException::class.java)!!
+                    val credential = GoogleAuthProvider.getCredential(account.idToken, null)
 
-            // Iniciamos sesión en Firebase
-            FirebaseAuth.getInstance().signInWithCredential(credential)
-                .addOnSuccessListener { onLoginSuccess() }
-                .addOnFailureListener {
-                    Toast.makeText(context, "Error en Firebase: ${it.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    // Iniciamos sesión en Firebase
+                    FirebaseAuth.getInstance().signInWithCredential(credential)
+                        .addOnSuccessListener { onLoginSuccess() }
+                        .addOnFailureListener {
+                            Toast.makeText(
+                                context,
+                                "Error en Firebase: ${it.localizedMessage}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        context,
+                        "Error con Google: ${e.localizedMessage}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-        } catch (e: Exception) {
-            Toast.makeText(context, "Error con Google: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            }
         }
-    }
-    }
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -82,10 +94,10 @@ fun LoginScreen(
         )
         Spacer(Modifier.height(30.dp))
         TextField(
-            value = userName,
-            label = { Text(stringResource(R.string.CampoUsuario)) },
+            value = userGmail,
+            label = { Text(stringResource(R.string.CampoGmail)) },
             singleLine = true,
-            onValueChange = { userName = it.trim() })
+            onValueChange = { userGmail = it.trim() })
 
         Spacer(Modifier.height(20.dp))
 
@@ -99,22 +111,39 @@ fun LoginScreen(
 
         Spacer(Modifier.height(20.dp))
 
-        Button(onClick = {
-            if (userName.isNotEmpty() && userPassword.isNotEmpty()) {
-                FirebaseAuth.getInstance().signInWithEmailAndPassword(userName, userPassword)
-                    .addOnSuccessListener { onLoginSuccess() }
-                    .addOnFailureListener {
-                        Toast.makeText(context, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show()
-                    }
-            } else {
-                Toast.makeText(context, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Button(onClick = {
+                if (userGmail.isNotEmpty() && userPassword.isNotEmpty()) {
+                    FirebaseAuth.getInstance().signInWithEmailAndPassword(userGmail, userPassword)
+                        .addOnSuccessListener { onLoginSuccess() }
+                        .addOnFailureListener {
+                            Toast.makeText(
+                                context,
+                                "Usuario o contraseña incorrectos",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                } else {
+                    Toast.makeText(context, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
+                }
+            }) {
+                Text(
+                    stringResource(R.string.Boton_InicioSesion),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
             }
-        }) {
+
             Text(
-                stringResource(R.string.Boton_InicioSesion),
-                color = MaterialTheme.colorScheme.onBackground
+                text = stringResource(R.string.Texto_RegistrarCuenta),
+                modifier = Modifier
+                    .padding(start = 10.dp)
+                    .clickable {
+                        onRegisterNewAccount()
+                    },
+                fontStyle = FontStyle.Italic
             )
         }
+
 
         Spacer(Modifier.height(15.dp))
 
@@ -122,7 +151,7 @@ fun LoginScreen(
             // Abre la ventana para seleccionar la cuenta de Google
             launcher.launch(googleSignInClient.signInIntent)
         }) {
-            Text("Inicia sesión con Google")
+            Text(stringResource(R.string.Boton_IniciarSesionGoogle))
         }
 
     }
