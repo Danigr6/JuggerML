@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">JuggerML</string>
+    <string name="titulo_LoginScreen">Incio de sesion</string>
+    <string name="titulo_HomeScreen">Pantalla de bienvenida</string>
+    <string name="titulo_SettingsScreen">Ajustes</string>
+    <string name="Boton_InicioSesion">Iniciar sesión</string>
+    <string name="Boton_CerrarSesion">Cerrar sesión</string>
+    <string name="CampoUsuario">Usuario</string>
+    <string name="CampoContraseña">Contraseña</string>
+    <string name="Boton_AbrirAjustes">Ajustes</string>
+    <string name="Boton_VolverHome">Volver a pantalla de bienvenida</string>
+</resources>
