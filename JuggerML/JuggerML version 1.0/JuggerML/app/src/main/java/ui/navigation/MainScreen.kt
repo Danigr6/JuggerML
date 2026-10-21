@@ -8,10 +8,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.juggerml.ui.theme.JuggerMLTheme
 import ui.screens.HomeScreen
 import ui.screens.LoginScreen
+import ui.screens.RegisterScreen
 import ui.screens.SettingsScreen
 
 @Preview(showSystemUi = true)
@@ -22,6 +25,7 @@ fun MainScreen() {
     var currentScreen = rememberSaveable { mutableStateOf(Screen.Login.route) }
 
     var tituloVentana = if (currentScreen.value == Screen.Login.route) Screen.Login.title
+    else if (currentScreen.value == Screen.Register.route) Screen.Register.title
     else if (currentScreen.value == Screen.Home.route) Screen.Home.title
     else Screen.Settings.title
     JuggerMLTheme {
@@ -43,10 +47,25 @@ fun MainScreen() {
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable(Screen.Login.route) {
-                    LoginScreen {
-                        currentScreen.value = Screen.Home.route
+                    LoginScreen(onLoginSuccess =  {
+                        currentScreen.value = Screen.Login.route
                         navController.navigate(Screen.Home.route) {
                             popUpTo(Screen.Login.route) {
+                                inclusive = true
+                            }
+                        }
+                    }, onRegisterNewAccount = {
+                        currentScreen.value = Screen.Login.route
+                        navController.navigate(Screen.Register.route){
+                            popUpTo(Screen.Login.route) {inclusive = true}
+                        }
+                    })
+                }
+                composable(Screen.Register.route) {
+                    RegisterScreen {
+                        currentScreen.value = Screen.Register.route
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Register.route) {
                                 inclusive = true
                             }
                         }
