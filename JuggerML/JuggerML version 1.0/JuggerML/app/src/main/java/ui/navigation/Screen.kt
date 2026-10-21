@@ -10,4 +10,5 @@ sealed class Screen(
     object Login: Screen("Login", R.string.titulo_LoginScreen)
     object Home: Screen("Home", R.string.titulo_HomeScreen)
     object Settings: Screen("Settings", R.string.titulo_SettingsScreen)
+    object Register: Screen("Register", R.string.titulo_RegisterScreen)
 }
