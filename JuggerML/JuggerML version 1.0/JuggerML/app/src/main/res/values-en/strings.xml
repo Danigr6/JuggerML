@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">JuggerML</string>
+    <string name="titulo_LoginScreen">Login</string>
+    <string name="titulo_HomeScreen">Home</string>
+    <string name="titulo_SettingsScreen">Settings</string>
+    <string name="Boton_InicioSesion">Login</string>
+    <string name="Boton_CerrarSesion">Logout</string>
+    <string name="CampoUsuario">User</string>
+    <string name="CampoContraseña">Password</string>
+    <string name="Boton_AbrirAjustes">Settings</string>
+    <string name="Boton_VolverHome">Go to home</string>
+</resources>

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "554556943892",
+    "project_id": "juggerml",
+    "storage_bucket": "juggerml.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:554556943892:android:fdfd050a819c609c370101",
+        "android_client_info": {
+          "package_name": "com.example.juggerml"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "554556943892-vdklf09uj1qqtqrfg5ep8d9v15t51k17.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.juggerml",
+            "certificate_hash": "cf1e1f92e041dc99e8a91e78b6ce8640f0bcb91e"
+          }
+        },
+        {
+          "client_id": "554556943892-2mn9gcmeg56qhtnkrup9pbv7t3fcfb9h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXxBwkULQl1z6ZErhEvLEWIe2BpBQn-7c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "554556943892-2mn9gcmeg56qhtnkrup9pbv7t3fcfb9h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
