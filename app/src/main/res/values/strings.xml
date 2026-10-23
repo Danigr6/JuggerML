@@ -1,0 +1,18 @@
+<resources>
+<string name="app_name">JuggerML</string>
+<string name="titulo_LoginScreen">Incio de sesion</string>
+<string name="titulo_HomeScreen">Pantalla de bienvenida</string>
+<string name="titulo_SettingsScreen">Ajustes</string>
+<string name="titulo_RegisterScreen">Registrar cuenta</string>
+<string name="Boton_InicioSesion">Iniciar sesión</string>
+<string name="Boton_CerrarSesion">Cerrar sesión</string>
+<string name="CampoGmail">Correo electronico</string>
+<string name="CampoContraseña">Contraseña</string>
+<string name="Boton_AbrirAjustes">Ajustes</string>
+<string name="Boton_VolverHome">Volver a pantalla de bienvenida</string>
+    <string name="Texto_RegistrarCuenta">Registrar cuenta</string>
+    <string name="Boton_RegistrarCuenta">Registrar cuenta </string>
+    <string name="Boton_RegistrarCuentaGoogle">Registrar cuenta con Google</string>
+    <string name="Boton_IniciarSesionGoogle">Inicia sesión con Google</string>
+    <string name="Mensaje_PartidoJugger">Partido de Jugger</string>
+</resources>
