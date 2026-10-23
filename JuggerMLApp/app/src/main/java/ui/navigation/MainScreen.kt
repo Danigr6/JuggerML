@@ -1,5 +1,7 @@
 package ui.navigation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -10,24 +12,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.juggerml.ui.theme.JuggerMLTheme
+import com.google.firebase.auth.FirebaseAuth
 import ui.screens.HomeScreen
 import ui.screens.LoginScreen
 import ui.screens.RegisterScreen
 import ui.screens.SettingsScreen
 
-@Preview(showSystemUi = true)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
     var navController = rememberNavController()
-    var currentScreen = rememberSaveable { mutableStateOf(Screen.Login.route) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
-    var tituloVentana = if (currentScreen.value == Screen.Login.route) Screen.Login.title
-    else if (currentScreen.value == Screen.Register.route) Screen.Register.title
-    else if (currentScreen.value == Screen.Home.route) Screen.Home.title
+    var tituloVentana = if (currentRoute == Screen.Login.route) Screen.Login.title
+    else if (currentRoute == Screen.Register.route) Screen.Register.title
+    else if (currentRoute == Screen.Home.route) Screen.Home.title
     else Screen.Settings.title
+
+    val startDestination = if (FirebaseAuth.getInstance().currentUser != null) {
+        Screen.Home.route
+    } else {
+        Screen.Login.route
+    }
     JuggerMLTheme {
         Scaffold(topBar = {
             TopAppBar(
@@ -42,46 +52,48 @@ fun MainScreen() {
             )
         }) { innerPadding ->
             NavHost(
-                startDestination = Screen.Login.route,
+                startDestination = startDestination,
                 navController = navController,
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable(Screen.Login.route) {
-                    LoginScreen(onLoginSuccess =  {
-                        currentScreen.value = Screen.Login.route
+                    LoginScreen(onLoginSuccess = {
                         navController.navigate(Screen.Home.route) {
                             popUpTo(Screen.Login.route) {
                                 inclusive = true
                             }
                         }
                     }, onRegisterNewAccount = {
-                        currentScreen.value = Screen.Login.route
-                        navController.navigate(Screen.Register.route){
-                            popUpTo(Screen.Login.route) {inclusive = true}
+                        navController.navigate(Screen.Register.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
                         }
                     })
                 }
                 composable(Screen.Register.route) {
-                    RegisterScreen {
-                        currentScreen.value = Screen.Register.route
+                    RegisterScreen(onRegisterSuccess = {
                         navController.navigate(Screen.Home.route) {
                             popUpTo(Screen.Register.route) {
                                 inclusive = true
                             }
                         }
-                    }
+                    }, onRegisterFailed = {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(Screen.Register.route) {
+                                inclusive = true
+                            }
+                        }
+                    })
                 }
 
                 composable(Screen.Home.route) {
                     HomeScreen(onLogout = {
-                        currentScreen.value = Screen.Login.route
                         navController.navigate(Screen.Login.route) {
                             popUpTo(Screen.Home.route) {
                                 inclusive = true
                             }
                         }
+                        FirebaseAuth.getInstance().signOut()
                     }, onSettings = {
-                        currentScreen.value = Screen.Settings.route
                         navController.navigate(Screen.Settings.route) {
                             popUpTo(Screen.Home.route) {
                                 inclusive = true
@@ -92,7 +104,6 @@ fun MainScreen() {
 
                 composable(Screen.Settings.route) {
                     SettingsScreen(onSettingsOut = {
-                        currentScreen.value = Screen.Home.route
                         navController.navigate(Screen.Home.route) {
                             popUpTo(Screen.Settings.route) {
                                 inclusive = true

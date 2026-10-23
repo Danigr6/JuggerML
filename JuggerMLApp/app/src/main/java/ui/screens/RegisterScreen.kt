@@ -37,7 +37,8 @@ import com.google.firebase.auth.GoogleAuthProvider
 @Preview(showSystemUi = true)
 @Composable
 fun RegisterScreen(
-    onRegisterSuccess: () -> Unit = {}
+    onRegisterSuccess: () -> Unit = {},
+    onRegisterFailed: () -> Unit = {}
 ) {
     var context = LocalContext.current
     var userGmail by rememberSaveable { mutableStateOf("") }
@@ -129,13 +130,8 @@ fun RegisterScreen(
                                 "Error al registrar: ${exception.localizedMessage}",
                                 Toast.LENGTH_LONG
                             ).show()
+                            onRegisterFailed()
                         }
-                } else {
-                    Toast.makeText(
-                        context,
-                        "Introduce un email y contraseña para registrarte",
-                        Toast.LENGTH_SHORT
-                    ).show()
                 }
             }) {
                 Text(
