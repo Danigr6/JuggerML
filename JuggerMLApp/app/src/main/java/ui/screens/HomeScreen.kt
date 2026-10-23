@@ -74,7 +74,6 @@ fun HomeScreen(onLogout: () -> Unit = {}, onSettings: () -> Unit = {}) {
                             .width(300.dp)
                             .fillMaxWidth()
                             .padding(
-                                top = 15.dp,
                                 start = 10.dp
                             ), // Espaciado limpio entre elementos
                         verticalAlignment = Alignment.CenterVertically
