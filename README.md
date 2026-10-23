@@ -30,7 +30,7 @@ La aplicación ha sido desarrollada utilizando las últimas herramientas y está
 ## 👥 Autores
 
 Proyecto desarrollado por:
-* **[Tu Nombre / Tu Compañero]** 
-* **[Tu Compañero / Tu Nombre]**
+* **Daniel García Rodríguez** 
+* **Abel Jaén Mora**
 
 *Alumnos de 2º de Desarrollo de Aplicaciones Multiplataforma (DAM).*
