@@ -15,4 +15,5 @@
     <string name="Boton_RegistrarCuentaGoogle">Registrar cuenta con Google</string>
     <string name="Boton_IniciarSesionGoogle">Inicia sesión con Google</string>
     <string name="Mensaje_PartidoJugger">Partido de Jugger</string>
+    <string name="Boton_SalirRegistrarCuenta">Volver al login</string>
 </resources>

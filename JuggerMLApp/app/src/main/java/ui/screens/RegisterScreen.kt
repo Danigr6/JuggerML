@@ -2,6 +2,7 @@ package ui.screens
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.Configuration
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -37,6 +38,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 @Preview(showSystemUi = true)
 @Composable
 fun RegisterScreen(
+    onRegisterOut: () -> Unit = {},
     onRegisterSuccess: () -> Unit = {},
     onRegisterFailed: () -> Unit = {}
 ) {
@@ -44,44 +46,6 @@ fun RegisterScreen(
     var userGmail by rememberSaveable { mutableStateOf("") }
     var userPassword by rememberSaveable { mutableStateOf("") }
 
-    //Google Sing-in
-    val webClienteId = "554556943892-vdklf09uj1qqtqrfg5ep8d9v15t51k17.apps.googleusercontent.com"
-    val gso = remember {
-        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(webClienteId)
-            .requestEmail()
-            .build()
-    }
-
-    val googleSignInClient = remember { GoogleSignIn.getClient(context, gso) }
-
-    val launcher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-                try {
-                    val account = task.getResult(ApiException::class.java)!!
-                    val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-
-                    // Iniciamos sesión en Firebase
-                    FirebaseAuth.getInstance().signInWithCredential(credential)
-                        .addOnSuccessListener { onRegisterSuccess() }
-                        .addOnFailureListener {
-                            Toast.makeText(
-                                context,
-                                "Error en Firebase: ${it.localizedMessage}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                } catch (e: Exception) {
-                    Toast.makeText(
-                        context,
-                        "Error con Google: ${e.localizedMessage}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -116,7 +80,8 @@ fun RegisterScreen(
                 if (userGmail.isNotEmpty() && userPassword.isNotEmpty()) {
                     FirebaseAuth.getInstance()
                         .createUserWithEmailAndPassword(userGmail, userPassword)
-                        .addOnSuccessListener { onRegisterSuccess()
+                        .addOnSuccessListener {
+                            onRegisterSuccess()
                             Toast.makeText(
                                 context,
                                 "¡Cuenta creada con éxito!",
@@ -139,17 +104,21 @@ fun RegisterScreen(
                     color = MaterialTheme.colorScheme.onBackground
                 )
             }
+            Button(
+                modifier = Modifier.padding(start = 10.dp),
+                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
+                onClick = {
+                    onRegisterOut()
+                }) {
+                Text(
+                    text = stringResource(R.string.Boton_SalirRegistrarCuenta),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
         }
 
 
         Spacer(Modifier.height(15.dp))
-
-        OutlinedButton(onClick = {
-            // Abre la ventana para seleccionar la cuenta de Google
-            launcher.launch(googleSignInClient.signInIntent)
-        }) {
-            Text(stringResource(R.string.Boton_RegistrarCuentaGoogle))
-        }
 
     }
 }

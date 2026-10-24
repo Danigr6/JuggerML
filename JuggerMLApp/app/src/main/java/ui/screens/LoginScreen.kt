@@ -1,7 +1,6 @@
 package ui.screens
 
 import android.app.Activity
-import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,10 +28,8 @@ import com.example.juggerml.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-
 
 @Preview(showSystemUi = true)
 @Composable
@@ -40,48 +37,12 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit = {},
     onRegisterNewAccount: () -> Unit = {}
 ) {
+    // Contexto actual de Android y estados locales para guardar el email y contraseña introducidos
     var context = LocalContext.current
     var userGmail by rememberSaveable { mutableStateOf("") }
     var userPassword by rememberSaveable { mutableStateOf("") }
 
-    //Google Sing-in
-    val webClienteId = "554556943892-vdklf09uj1qqtqrfg5ep8d9v15t51k17.apps.googleusercontent.com"
-    val gso = remember {
-        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(webClienteId)
-            .requestEmail()
-            .build()
-    }
-
-    val googleSignInClient = remember { GoogleSignIn.getClient(context, gso) }
-
-    val launcher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-                try {
-                    val account = task.getResult(ApiException::class.java)!!
-                    val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-
-                    // Iniciamos sesión en Firebase
-                    FirebaseAuth.getInstance().signInWithCredential(credential)
-                        .addOnSuccessListener { onLoginSuccess() }
-                        .addOnFailureListener {
-                            Toast.makeText(
-                                context,
-                                "Error en Firebase: ${it.localizedMessage}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                } catch (e: Exception) {
-                    Toast.makeText(
-                        context,
-                        "Error con Google: ${e.localizedMessage}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
+    // --- DISEÑO DE LA INTERFAZ (UI) ---
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -93,6 +54,8 @@ fun LoginScreen(
             modifier = Modifier.size(130.dp)
         )
         Spacer(Modifier.height(30.dp))
+
+        // Campo de texto para el correo electrónico (Gmail)
         TextField(
             value = userGmail,
             label = { Text(stringResource(R.string.CampoGmail)) },
@@ -101,6 +64,7 @@ fun LoginScreen(
 
         Spacer(Modifier.height(20.dp))
 
+        // Campo de texto oculto para la contraseña
         TextField(
             value = userPassword,
             label = { Text(stringResource(R.string.CampoContraseña)) },
@@ -112,10 +76,14 @@ fun LoginScreen(
         Spacer(Modifier.height(20.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
+            // Botón tradicional de inicio de sesión con Correo y Contraseña
             Button(onClick = {
                 if (userGmail.isNotEmpty() && userPassword.isNotEmpty()) {
                     FirebaseAuth.getInstance().signInWithEmailAndPassword(userGmail, userPassword)
-                        .addOnSuccessListener { onLoginSuccess() }
+                        .addOnSuccessListener {
+                            onLoginSuccess()
+                            Toast.makeText(context, "Sesión iniciada con éxito", Toast.LENGTH_LONG).show()
+                        }
                         .addOnFailureListener {
                             Toast.makeText(
                                 context,
@@ -133,6 +101,7 @@ fun LoginScreen(
                 )
             }
 
+            // Texto interactivo para redirigir a la pantalla de registro
             Text(
                 text = stringResource(R.string.Texto_RegistrarCuenta),
                 modifier = Modifier
@@ -144,15 +113,6 @@ fun LoginScreen(
             )
         }
 
-
         Spacer(Modifier.height(15.dp))
-
-        OutlinedButton(onClick = {
-            // Abre la ventana para seleccionar la cuenta de Google
-            launcher.launch(googleSignInClient.signInIntent)
-        }) {
-            Text(stringResource(R.string.Boton_IniciarSesionGoogle))
-        }
-
     }
 }

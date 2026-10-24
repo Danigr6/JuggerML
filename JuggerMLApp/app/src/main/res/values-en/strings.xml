@@ -15,4 +15,6 @@
     <string name="Boton_RegistrarCuenta">Singin</string>
     <string name="Boton_RegistrarCuentaGoogle">Register with google</string>
     <string name="Boton_IniciarSesionGoogle">Login with Google</string>
+    <string name="Mensaje_PartidoJugger">Jugger Match</string>
+    <string name="Boton_SalirRegistrarCuenta">Return to login</string>
 </resources>
